@@ -25,7 +25,7 @@ func requestHandler(c *gin.Context) {
 
 	// Set the CORS headers
 	c.Header("Access-Control-Allow-Origin", "*")
-    c.Header("Access-Control-Allow-Methods", "GET")
+	c.Header("Access-Control-Allow-Methods", "GET")
 
 	// Send a request to the api with the URI
 	res, err := http.Get(url+c.Request.RequestURI)
