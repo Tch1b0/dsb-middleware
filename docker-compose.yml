@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+    server:
+        build: .
+        container_name: dsb_middleware
+        restart: always
+        ports:
+            - "${SERVER_PORT}:3000"
