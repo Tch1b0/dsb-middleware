@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,14 +22,24 @@ func main() {
 
 // The Handler for every route
 func requestHandler(c *gin.Context) {
-	url := "https://mobileapi.dsbcontrol.de"
-
 	// Set the CORS headers
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 
+	var url string
+	uri := c.Request.RequestURI
+
+
+	if strings.HasPrefix(uri, "/light") {
+		url = "https://light.dsbcontrol.de"
+		uri = strings.Replace(uri, "/light", "", 1)
+	} else {
+		url = "https://mobileapi.dsbcontrol.de"
+			
+	}
+
 	// Send a request to the api with the URI
-	res, err := http.Get(url+c.Request.RequestURI)
+	res, err := http.Get(url+uri)
 	if err != nil {
 		fmt.Println(err)
 		c.Status(500)
