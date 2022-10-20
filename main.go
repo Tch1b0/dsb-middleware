@@ -13,6 +13,20 @@ func main() {
 	// Create a new gin Router
 	r := gin.Default()
 
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
+
 	// Set the `requestHandler` function as a handler for every route
 	r.NoRoute(requestHandler)
 
@@ -22,24 +36,19 @@ func main() {
 
 // The Handler for every route
 func requestHandler(c *gin.Context) {
-	// Set the CORS headers
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET")
-
 	var url string
 	uri := c.Request.RequestURI
-
 
 	if strings.HasPrefix(uri, "/light") {
 		url = "https://light.dsbcontrol.de"
 		uri = strings.Replace(uri, "/light", "", 1)
 	} else {
 		url = "https://mobileapi.dsbcontrol.de"
-			
+
 	}
 
 	// Send a request to the api with the URI
-	res, err := http.Get(url+uri)
+	res, err := http.Get(url + uri)
 	if err != nil {
 		fmt.Println(err)
 		c.Status(500)
